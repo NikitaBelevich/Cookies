@@ -54,3 +54,44 @@ function nextUserBirthday() {
 
     task2.querySelector('p').textContent = 'До вашего дня рождения осталось: ' + timestr;
 }
+
+
+// Task 3. Дана форма с инпутами. Пользователь вводит какие-то данные и закрывает страницу (не факт, что он заполнил всю форму). Сделайте так, чтобы при следующем заходе на страницу введенные им ранее данные стояли на своих местах.
+
+const form3 = document.querySelector('.form-task3');
+
+window.addEventListener('unload', () => {
+    // Когда пользователь покидает страницу, перебираем все поря формы и записываем на их основе куки
+    saveDataOfForm(form3);
+});
+
+function saveDataOfForm(form) {
+    for (const input of form.elements) {
+        const value = input.value.trim(); // считываем с каждого поля значение
+        // Если ничего нет в полях, то не записываем куки
+        if (value) {
+            const cookieName = Object.keys(input.dataset);
+            setCookie(cookieName[0], value);
+        }
+
+    }
+}
+
+// При загрузке страницы подтягиваем в поля формы информацию из кук
+fillInputsOfForm(form3);
+function fillInputsOfForm(form) {
+    // Перебираем все инпуты формы
+    for (const input of form.elements) {
+        // Получили с текущего инпута дата атрибут имени куки
+        const cookieName = Object.keys(input.dataset)[0];
+        // console.warn(cookieName);
+        // Если куки нет по атрибуту инпута, то идём к следующему инпуту
+        if (!getCookie(cookieName)) continue;
+
+        // Если есть, выбираем инпут по имени куки, по дата атрибуту
+        let targetInp = form.querySelector(`input[data-${cookieName}]`);
+        
+        // Записываем куки в инпут
+        targetInp.value = getCookie(cookieName);
+    }
+}
