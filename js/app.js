@@ -95,3 +95,49 @@ function fillInputsOfForm(form) {
         targetInp.value = getCookie(cookieName);
     }
 }
+
+// Task 4. Даны чекбоксы. Пользователь произвольно отмечает их и закрывает страницу. Сделайте так, чтобы при следующем заходе на страницу чекбоксы стали отмеченными так, как это сделал пользователь ранее.
+
+const form4 = document.querySelector('.form-task4');
+// Добавление атрибута с порядковым номером каждого бокса
+const allCheckbox4 = form4.querySelectorAll('input[type="checkbox"]');
+allCheckbox4.forEach((elem, i) => {
+    elem.dataset.checkbox = 'checkbox-' + (i + 1);
+});
+
+const checkedCheckboxes = new Set();
+// При кликнутом чекбоксе, добавляем его в объект как чекнутый
+form4.addEventListener('click', event => {
+    const targetCheckbox = event.target.closest('input');
+    if (!targetCheckbox) return; // Отсеиваем возможный null
+
+    // Добавляем в массив помеченный чекбокс и удаляем его если он был нажат(снимаем выделение)
+    if (targetCheckbox.checked) {
+        checkedCheckboxes.add(targetCheckbox);
+    } else {
+        checkedCheckboxes.delete(targetCheckbox);
+    }
+});
+
+window.addEventListener('beforeunload', saveCheckedCheckboxes);
+function saveCheckedCheckboxes() {
+    // Когда пользователь покидает страницу, мы для чекнутых чекбоксов записываем куки
+    checkedCheckboxes.forEach(elem => {
+        setCookie(elem.dataset.checkbox, 'checked');
+    });
+}
+
+setCheckedOnCheckbox();
+function setCheckedOnCheckbox() {
+    allCheckbox4.forEach(elem => {
+        const cookieName = Object.values(elem.dataset)[0];
+        let cookie = getCookie(cookieName);
+        if (!cookie) return;
+
+        // Получили чекбокс который в прошлый раз был чекнут
+        let targetCheckbox = document.querySelector(`input[data-checkbox="${cookieName}"]`);
+        targetCheckbox.checked = true;
+    });
+}
+
+
