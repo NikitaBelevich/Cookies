@@ -123,7 +123,7 @@ window.addEventListener('beforeunload', saveCheckedCheckboxes);
 function saveCheckedCheckboxes() {
     // Когда пользователь покидает страницу, мы для чекнутых чекбоксов записываем куки
     checkedCheckboxes.forEach(elem => {
-        setCookie(elem.dataset.checkbox, 'checked');
+        setCookie(elem.dataset.checkbox, 'checked', {'max-age': 3600});
     });
 }
 
@@ -140,4 +140,31 @@ function setCheckedOnCheckbox() {
     });
 }
 
+// Task 5.  Дан тектареа. Пользователь может потянуть за его угол и изменить его размер. Сделайте так, чтобы при следующем заходе на страницу, текстареа был заданного размера.
+const textarea5 = document.querySelector('.task5 textarea');
 
+// При закрытии страницы, мы делаем куки с размерами текстареа
+window.addEventListener('unload', () => {
+    saveSizesTextarea(textarea5);
+});
+function saveSizesTextarea(textarea) {
+    const textareaName = textarea.getAttribute('name');
+    const textareaParametrs = {
+        'height': textarea.clientHeight,
+        'width': textarea.clientWidth,
+    };
+    // Устанавливаем куку: имя формы = параметры формы в представлении JSON
+    setCookie(textareaName, JSON.stringify(textareaParametrs));
+}
+
+// При загрузке документа, мы считваем куки текстареа с размерами, которые были на момент последнего посещения
+applaySizesTextarea(textarea5, 4);
+function applaySizesTextarea(textarea, padding) {
+    const textareaName = textarea.getAttribute('name');
+    const textareaCookie = getCookie(textareaName);
+    const textareaParametrs = JSON.parse(textareaCookie);
+    textarea.style.cssText = `
+                        width: ${textareaParametrs.width - padding}px;
+                        height: ${textareaParametrs.height - padding}px;    
+    `;
+}
