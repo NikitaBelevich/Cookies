@@ -16,3 +16,30 @@ input[type="number"] {
   width: 250px;
   height: 100px;
 }
+
+.parent-input-history button {
+  padding: 0;
+  width: 15px;
+  height: 15px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  -webkit-transform: translateY(-4px);
+          transform: translateY(-4px);
+}
+
+.parent-input-history button:last-child {
+  border-top: 12px solid transparent;
+  border-left: 24px solid #777777;
+  border-bottom: 12px solid transparent;
+}
+
+.parent-input-history button:first-child {
+  border-top: 12px solid transparent;
+  border-right: 24px solid #777777;
+  border-bottom: 12px solid transparent;
+}
+
+.parent-input-history button:focus {
+  outline: none;
+}

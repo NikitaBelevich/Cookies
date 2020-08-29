@@ -168,3 +168,76 @@ function applaySizesTextarea(textarea, padding) {
                         height: ${textareaParametrs.height - padding}px;    
     `;
 }
+
+
+// Task 6.  Дан инпут. В него можно ввести данные, затем поредактировать их, затем еще поредактировать. Пусть инпут хранит историю своих изменений (даже после перезагрузки страницы). Сверху над инпутом должны появится стрелочки, с помощью которых можно перемещаться по истории.
+
+// в set будем собирать данные из инпута после каждого изменения
+const inputHistory = new Set();
+const task6 = document.querySelector('.parent-input-history');
+const inp6 = task6.querySelector('input');
+inp6.addEventListener('change', () => {
+    saveHistoryInput(inp6);
+});
+// TODO Запись куки
+function saveHistoryInput(input) {
+    const value = input.value.trim();
+    if (!value) return;
+    inputHistory.add(value);
+    console.log(inputHistory);
+
+    const inputName = inp6.getAttribute('name');
+    // Создаём куки, значением будут элементы массива разделённые запятой
+    setCookie(inputName, `${Array.from(inputHistory)}`);
+}
+// TODO Получение истории из куки
+function getHistoryInput() {
+    const inputName = inp6.getAttribute('name');
+    const cookieHistory = getCookie(inputName);
+    if (!cookieHistory) return;
+
+    const arrayHistory = cookieHistory.split(',');
+    return arrayHistory;
+}
+// Обрабатываем навигацию по истории 
+const backHistory = task6.firstElementChild;
+const forwardHistory = task6.lastElementChild;
+
+let countHis = 0;
+// TODO Forward button -------------------------
+forwardHistory.addEventListener('click', () => {
+    const history = getHistoryInput();
+    if (!history) return;
+
+    const value = inp6.value.trim();
+    let historyLength = history.length;
+    // Если у нас поле пустое, счётчику даём 0, чтобы наверняка начать с 1 элемента массива
+    if (value == '') countHis = 0;
+    // Пока у нас счётчик меньше длины массива, мы перемещаемся по массиву
+    if (countHis != historyLength) {
+        // Если текущее значение инпута равно последнему в массиве, т.е оно у нас в поле, то мы дальше не переключаем
+        // Т.е Текущее value инпута только что добавилось в массив последним элементом и дальше переключать некуда, а также, чтобы не происходило переключения на 0 элемент массива, это нелогично, для этого есть кнопка "назад"
+        if (value == history[historyLength - 1]) {
+            return;
+        }
+        inp6.value = history[countHis++];
+    }
+});
+
+// TODO Back button -------------------------
+backHistory.addEventListener('click', () => {
+    const history = getHistoryInput();
+    if (!history) return;
+    const value = inp6.value.trim();
+    
+    // Получили индекс элемента в массиве, который является текущем в инпуте, т.е последний элемент массива
+    const currentIndex = history.indexOf(value);
+    countHis = currentIndex;
+    // Если у нас 0 индекс, значит первый элемент массива уже стоит в инпуте, и мы больше ничего не делаем
+    // И если у нас пустое значение инпута, и мы нажимаем влево, то также мы ничего не делаем
+    if (countHis == 0 || !value) {
+        countHis = 1; // Чтобы правая стрелка сразу выдала 2 элемент массива, т.к первый уже стоит в поле
+        return;
+    }
+    inp6.value = history[--countHis];
+});

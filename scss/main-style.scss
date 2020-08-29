@@ -17,3 +17,29 @@ input[type="number"] {
     width: 250px;
     height: 100px;
 }
+
+.parent-input-history {
+    button {
+        padding: 0;
+        width: 15px;
+        height: 15px;
+        border: none;
+        background: none;
+        cursor: pointer;
+        transform: translateY(-4px);
+
+        &:last-child {
+            border-top: 12px solid transparent;
+            border-left: 24px solid #777777;
+            border-bottom: 12px solid transparent;
+        }
+        &:first-child {
+            border-top: 12px solid transparent;
+            border-right: 24px solid #777777;
+            border-bottom: 12px solid transparent;
+        }
+        &:focus {
+            outline: none;
+        }
+    }
+}
